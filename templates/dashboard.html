@@ -1,0 +1,1381 @@
+<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Intelligent Network Infrastructure Monitoring System
+    </title>
+
+
+    <!-- Auto Refresh Every 5 Seconds -->
+
+    <meta
+        http-equiv="refresh"
+        content="5"
+    >
+
+
+    <!-- Chart.js -->
+
+    <script
+        src="https://cdn.jsdelivr.net/npm/chart.js">
+    </script>
+
+
+    <style>
+
+        * {
+            box-sizing: border-box;
+        }
+
+
+        body {
+
+            font-family:
+                Arial,
+                sans-serif;
+
+            background:
+                #f3f5f8;
+
+            margin: 0;
+
+            color:
+                #252525;
+        }
+
+
+        /* ==========================================
+           HEADER
+        ========================================== */
+
+        .header {
+
+            background:
+                #17202a;
+
+            color:
+                white;
+
+            padding:
+                25px 40px;
+
+            display:
+                flex;
+
+            justify-content:
+                space-between;
+
+            align-items:
+                center;
+        }
+
+
+        .header h1 {
+
+            margin: 0;
+
+            font-size:
+                25px;
+        }
+
+
+        .header p {
+
+            margin:
+                7px 0 0 0;
+
+            color:
+                #c9d1d9;
+        }
+
+
+        .live {
+
+            background:
+                #198754;
+
+            padding:
+                8px 15px;
+
+            border-radius:
+                20px;
+
+            font-weight:
+                bold;
+        }
+
+
+        /* ==========================================
+           MAIN CONTAINER
+        ========================================== */
+
+        .container {
+
+            max-width:
+                1400px;
+
+            margin:
+                auto;
+
+            padding:
+                30px;
+        }
+
+
+        /* ==========================================
+           SUMMARY CARDS
+        ========================================== */
+
+        .summary {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(180px, 1fr)
+                );
+
+            gap:
+                18px;
+
+            margin-bottom:
+                35px;
+        }
+
+
+        .summary-card {
+
+            background:
+                white;
+
+            padding:
+                22px;
+
+            border-radius:
+                12px;
+
+            box-shadow:
+                0 3px 10px
+                rgba(0,0,0,0.07);
+        }
+
+
+        .summary-card .title {
+
+            color:
+                #6c757d;
+
+            font-size:
+                14px;
+
+            margin-bottom:
+                10px;
+        }
+
+
+        .summary-card .number {
+
+            font-size:
+                28px;
+
+            font-weight:
+                bold;
+        }
+
+
+        /* ==========================================
+           SECTION
+        ========================================== */
+
+        .section {
+
+            margin-bottom:
+                35px;
+        }
+
+
+        .section-title {
+
+            margin-bottom:
+                18px;
+
+            font-size:
+                21px;
+        }
+
+
+        /* ==========================================
+           DEVICES
+        ========================================== */
+
+        .devices {
+
+            display:
+                grid;
+
+            grid-template-columns:
+                repeat(
+                    auto-fit,
+                    minmax(260px, 1fr)
+                );
+
+            gap:
+                20px;
+        }
+
+
+        .device-card {
+
+            background:
+                white;
+
+            padding:
+                22px;
+
+            border-radius:
+                12px;
+
+            box-shadow:
+                0 3px 10px
+                rgba(0,0,0,0.07);
+        }
+
+
+        .device-card h3 {
+
+            margin-top:
+                0;
+
+            margin-bottom:
+                8px;
+        }
+
+
+        .ip {
+
+            color:
+                #6c757d;
+
+            margin-bottom:
+                15px;
+        }
+
+
+        /* ==========================================
+           STATUS
+        ========================================== */
+
+        .status {
+
+            display:
+                inline-block;
+
+            padding:
+                7px 12px;
+
+            border-radius:
+                20px;
+
+            font-size:
+                14px;
+
+            font-weight:
+                bold;
+
+            margin-bottom:
+                15px;
+        }
+
+
+        .normal {
+
+            background:
+                #d1e7dd;
+
+            color:
+                #0f5132;
+        }
+
+
+        .warning {
+
+            background:
+                #fff3cd;
+
+            color:
+                #664d03;
+        }
+
+
+        .critical {
+
+            background:
+                #f8d7da;
+
+            color:
+                #842029;
+        }
+
+
+        .offline {
+
+            background:
+                #343a40;
+
+            color:
+                white;
+        }
+
+
+        /* ==========================================
+           METRICS
+        ========================================== */
+
+        .metric {
+
+            background:
+                #f8f9fa;
+
+            padding:
+                12px;
+
+            border-radius:
+                8px;
+
+            margin-top:
+                10px;
+        }
+
+
+        .metric-name {
+
+            color:
+                #6c757d;
+
+            font-size:
+                13px;
+        }
+
+
+        .metric-value {
+
+            font-size:
+                20px;
+
+            font-weight:
+                bold;
+
+            margin-top:
+                4px;
+        }
+
+
+        .last-check {
+
+            color:
+                #777;
+
+            font-size:
+                12px;
+
+            margin-top:
+                18px;
+        }
+
+
+        /* ==========================================
+           GRAPH
+        ========================================== */
+
+        .chart-box {
+
+            background:
+                white;
+
+            padding:
+                25px;
+
+            border-radius:
+                12px;
+
+            box-shadow:
+                0 3px 10px
+                rgba(0,0,0,0.07);
+        }
+
+
+        /* ==========================================
+           CURRENT ALERTS
+        ========================================== */
+
+        .alerts-box {
+
+            background:
+                white;
+
+            border-radius:
+                12px;
+
+            padding:
+                22px;
+
+            box-shadow:
+                0 3px 10px
+                rgba(0,0,0,0.07);
+        }
+
+
+        .alert-item {
+
+            padding:
+                13px;
+
+            border-bottom:
+                1px solid #eee;
+        }
+
+
+        .alert-item:last-child {
+
+            border-bottom:
+                none;
+        }
+
+
+        /* ==========================================
+           INCIDENT TABLE
+        ========================================== */
+
+        .table-container {
+
+            overflow-x:
+                auto;
+
+            background:
+                white;
+
+            border-radius:
+                12px;
+
+            box-shadow:
+                0 3px 10px
+                rgba(0,0,0,0.07);
+        }
+
+
+        table {
+
+            width:
+                100%;
+
+            border-collapse:
+                collapse;
+        }
+
+
+        th {
+
+            background:
+                #17202a;
+
+            color:
+                white;
+
+            text-align:
+                left;
+
+            padding:
+                14px;
+
+            font-size:
+                14px;
+        }
+
+
+        td {
+
+            padding:
+                14px;
+
+            border-bottom:
+                1px solid #eee;
+
+            font-size:
+                14px;
+        }
+
+
+        tr:hover {
+
+            background:
+                #f8f9fa;
+        }
+
+
+        .incident-active {
+
+            color:
+                #dc3545;
+
+            font-weight:
+                bold;
+        }
+
+
+        .incident-recovered {
+
+            color:
+                #198754;
+
+            font-weight:
+                bold;
+        }
+
+
+        .no-data {
+
+            color:
+                #6c757d;
+
+            text-align:
+                center;
+
+            padding:
+                20px;
+        }
+
+
+        /* ==========================================
+           FOOTER
+        ========================================== */
+
+        .footer {
+
+            text-align:
+                center;
+
+            color:
+                #777;
+
+            padding:
+                25px;
+
+            font-size:
+                13px;
+        }
+
+
+        /* ==========================================
+           RESPONSIVE
+        ========================================== */
+
+        @media (
+            max-width: 700px
+        ) {
+
+            .header {
+
+                flex-direction:
+                    column;
+
+                align-items:
+                    flex-start;
+
+                gap:
+                    15px;
+            }
+
+
+            .container {
+
+                padding:
+                    15px;
+            }
+
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+
+<!-- ==========================================
+     HEADER
+========================================== -->
+
+<div class="header">
+
+    <div>
+
+        <h1>
+            🌐 Intelligent Network Infrastructure Monitoring System
+        </h1>
+
+        <p>
+            Real-time Network & System Performance Monitoring
+        </p>
+
+    </div>
+
+
+    <div class="live">
+
+        ● LIVE
+
+    </div>
+
+</div>
+
+
+
+<div class="container">
+
+
+<!-- ==========================================
+     SUMMARY
+========================================== -->
+
+<div class="section">
+
+    <h2 class="section-title">
+        System Overview
+    </h2>
+
+
+    <div class="summary">
+
+
+        <div class="summary-card">
+
+            <div class="title">
+                🟢 Normal
+            </div>
+
+            <div class="number">
+                {{ normal_count }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="title">
+                🟡 Warnings
+            </div>
+
+            <div class="number">
+                {{ warning_count }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="title">
+                🔴 Critical
+            </div>
+
+            <div class="number">
+                {{ critical_count }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="title">
+                ⚫ Offline
+            </div>
+
+            <div class="number">
+                {{ offline_count }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="title">
+                ⏱ Average Latency
+            </div>
+
+            <div class="number">
+                {{ average_latency }} ms
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="title">
+                🚨 Total Incidents
+            </div>
+
+            <div class="number">
+                {{ total_incidents }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="title">
+                🔴 Active Incidents
+            </div>
+
+            <div class="number">
+                {{ active_incident_count }}
+            </div>
+
+        </div>
+
+
+        <div class="summary-card">
+
+            <div class="title">
+                ⏳ Total Downtime
+            </div>
+
+            <div
+                class="number"
+                style="font-size: 20px;"
+            >
+                {{ total_downtime }}
+            </div>
+
+        </div>
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================
+     DEVICES
+========================================== -->
+
+<div class="section">
+
+    <h2 class="section-title">
+        Monitored Devices
+    </h2>
+
+
+    <div class="devices">
+
+
+    {% for device, data in devices.items() %}
+
+
+        <div class="device-card">
+
+
+            <h3>
+                {{ device }}
+            </h3>
+
+
+            <div class="ip">
+
+                IP:
+                {{ data["IP Address"] }}
+
+            </div>
+
+
+            {% if data["Status"] == "NORMAL" %}
+
+                <div class="status normal">
+                    🟢 NORMAL
+                </div>
+
+
+            {% elif data["Status"] == "WARNING" %}
+
+                <div class="status warning">
+                    🟡 WARNING
+                </div>
+
+
+            {% elif data["Status"] == "OFFLINE" %}
+
+                <div class="status offline">
+                    ⚫ OFFLINE
+                </div>
+
+
+            {% else %}
+
+                <div class="status critical">
+                    🔴 CRITICAL
+                </div>
+
+            {% endif %}
+
+
+
+            {% if device == "Local PC" %}
+
+
+                <div class="metric">
+
+                    <div class="metric-name">
+                        CPU Usage
+                    </div>
+
+                    <div class="metric-value">
+                        {{ data["CPU (%)"] }} %
+                    </div>
+
+                </div>
+
+
+                <div class="metric">
+
+                    <div class="metric-name">
+                        RAM Usage
+                    </div>
+
+                    <div class="metric-value">
+                        {{ data["RAM (%)"] }} %
+                    </div>
+
+                </div>
+
+
+            {% else %}
+
+
+                <div class="metric">
+
+                    <div class="metric-name">
+                        Latency
+                    </div>
+
+                    <div class="metric-value">
+                        {{ data["Latency (ms)"] }} ms
+                    </div>
+
+                </div>
+
+
+            {% endif %}
+
+
+            <div class="last-check">
+
+                Last Check:
+
+                {{ data["Timestamp"] }}
+
+            </div>
+
+
+        </div>
+
+
+    {% endfor %}
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================
+     LATENCY GRAPH
+========================================== -->
+
+<div class="section">
+
+    <h2 class="section-title">
+        📈 Network Latency History
+    </h2>
+
+
+    <div class="chart-box">
+
+        <canvas
+            id="latencyChart">
+        </canvas>
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================
+     CURRENT ALERTS
+========================================== -->
+
+<div class="section">
+
+    <h2 class="section-title">
+        🚨 Current Alerts
+    </h2>
+
+
+    <div class="alerts-box">
+
+
+    {% if current_alerts %}
+
+
+        {% for alert in current_alerts %}
+
+
+            <div class="alert-item">
+
+
+                <strong>
+
+                    {{ alert["Device"] }}
+
+                </strong>
+
+
+                &nbsp; — &nbsp;
+
+
+                {% if alert["Status"] == "WARNING" %}
+
+                    <span class="warning status">
+
+                        🟡 WARNING
+
+                    </span>
+
+
+                {% elif alert["Status"] == "OFFLINE" %}
+
+                    <span class="offline status">
+
+                        ⚫ OFFLINE
+
+                    </span>
+
+
+                {% else %}
+
+                    <span class="critical status">
+
+                        🔴 CRITICAL
+
+                    </span>
+
+
+                {% endif %}
+
+
+                <br>
+
+
+                <small>
+
+                    Last detected:
+                    {{ alert["Timestamp"] }}
+
+                </small>
+
+
+            </div>
+
+
+        {% endfor %}
+
+
+    {% else %}
+
+
+        <div class="no-data">
+
+            ✅ No active alerts.
+            All monitored systems are operating normally.
+
+        </div>
+
+
+    {% endif %}
+
+
+    </div>
+
+</div>
+
+
+
+<!-- ==========================================
+     INCIDENT HISTORY
+========================================== -->
+
+<div class="section">
+
+    <h2 class="section-title">
+
+        📋 Incident History
+
+    </h2>
+
+
+    <div class="table-container">
+
+
+        <table>
+
+
+            <thead>
+
+                <tr>
+
+                    <th>
+                        Device
+                    </th>
+
+                    <th>
+                        Incident
+                    </th>
+
+                    <th>
+                        Started
+                    </th>
+
+                    <th>
+                        Recovered
+                    </th>
+
+                    <th>
+                        Duration
+                    </th>
+
+                    <th>
+                        Status
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody>
+
+
+            {% if incident_history %}
+
+
+                {% for incident in incident_history %}
+
+
+                    <tr>
+
+
+                        <td>
+
+                            <strong>
+
+                                {{ incident["Device"] }}
+
+                            </strong>
+
+                        </td>
+
+
+                        <td>
+
+                            {{ incident["Incident Type"] }}
+
+                        </td>
+
+
+                        <td>
+
+                            {{ incident["Start Time"] }}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if incident["Recovery Time"] %}
+
+                                {{ incident["Recovery Time"] }}
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+                            {% if incident["Duration"] %}
+
+                                {{ incident["Duration"] }}
+
+                            {% else %}
+
+                                Ongoing
+
+                            {% endif %}
+
+                        </td>
+
+
+                        <td>
+
+
+                            {% if incident["Status"] == "ACTIVE" %}
+
+
+                                <span class="incident-active">
+
+                                    ● ACTIVE
+
+                                </span>
+
+
+                            {% else %}
+
+
+                                <span class="incident-recovered">
+
+                                    ✓ RECOVERED
+
+                                </span>
+
+
+                            {% endif %}
+
+
+                        </td>
+
+
+                    </tr>
+
+
+                {% endfor %}
+
+
+            {% else %}
+
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="no-data"
+                    >
+
+                        No incidents recorded yet.
+
+                    </td>
+
+                </tr>
+
+
+            {% endif %}
+
+
+            </tbody>
+
+
+        </table>
+
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+
+<!-- ==========================================
+     FOOTER
+========================================== -->
+
+<div class="footer">
+
+    Intelligent Network Infrastructure Monitoring
+    & Alert System
+
+    <br>
+
+    Monitoring dashboard automatically refreshes
+    every 5 seconds.
+
+</div>
+
+
+
+<!-- ==========================================
+     CHART SCRIPT
+========================================== -->
+
+<script>
+
+
+const labels =
+    {{ chart_labels | tojson }};
+
+
+const datasets =
+    {{ chart_datasets | tojson }};
+
+
+const chartColors = [
+
+    "#0d6efd",
+
+    "#198754",
+
+    "#dc3545",
+
+    "#fd7e14",
+
+    "#6f42c1"
+
+];
+
+
+datasets.forEach(
+    function(dataset, index) {
+
+        dataset.borderColor =
+            chartColors[
+                index
+                % chartColors.length
+            ];
+
+        dataset.backgroundColor =
+            chartColors[
+                index
+                % chartColors.length
+            ];
+
+        dataset.tension = 0.3;
+
+        dataset.fill = false;
+
+        dataset.pointRadius = 3;
+    }
+);
+
+
+const ctx = document
+    .getElementById(
+        "latencyChart"
+    )
+    .getContext("2d");
+
+
+new Chart(
+    ctx,
+    {
+
+        type: "line",
+
+
+        data: {
+
+            labels: labels,
+
+            datasets: datasets
+        },
+
+
+        options: {
+
+            responsive: true,
+
+            interaction: {
+
+                mode: "index",
+
+                intersect: false
+            },
+
+
+            plugins: {
+
+                legend: {
+
+                    display: true,
+
+                    position: "top"
+                }
+
+            },
+
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    title: {
+
+                        display: true,
+
+                        text:
+                            "Latency (ms)"
+                    }
+
+                },
+
+
+                x: {
+
+                    title: {
+
+                        display: true,
+
+                        text:
+                            "Recent Samples"
+                    }
+
+                }
+
+            }
+
+        }
+
+    }
+);
+
+
+</script>
+
+
+</body>
+
+</html>
